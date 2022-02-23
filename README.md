@@ -28,17 +28,22 @@ function Card(props) {
       entries.forEach((entry) => {
         // isIntersecting 화면안에 이요소가 들어와 있냐 아니냐를 나타나게 하는 값
         if (entry.isIntersecting) {
+          const target = entry.target
+          const previousSibling = target.previousSibling
           // 화면에 해당 요소로 접근 하면 img src에 data-src값을 넣는다.
-          entry.target.src = entry.target.dataset.src
+          target.src = target.dataset.src
+          previousSibling.srcset = previousSibling.dataset.srcset
           // 지정한 요소를 이미 주시하고 있지 않을 때는 아무것도 수행하지 않으며 예외도 발생하지 않습니다.
-          observer.unobserve(entry.target)
+          observer.unobserve(target)
         }
       })
     }
     const options = {}
     // lazy load
     const observer = new IntersectionObserver(callback, options)
-    observer.observe(imgRef.current)
+    observer.observe(imgRef1.current)
+    observer.observe(imgRef2.current)
+    observer.observe(imgRef3.current)
   }, [])
 
   return (
@@ -67,7 +72,30 @@ export default Card
 - 하지만 jpg보다 화질이 뛰어나고 용량이 적다.
 - [WEBP이미지 변환 사이트](https://squoosh.app/) 사이즈 조절도 가능 하다.
 
+```html
+<picture>
+  <source src="webp경로.webp" type="image/webp" />
+  <img src="jpg경로.jpg" alt="" />
+</picture>
+```
+
+- `source`에서 webp경로를 부르고 만약 파일이 없거나 오류일경우 img를 부른다.
+
 ### 동영상 최적화
+
+동영상 툴을 이용해서 압축시키는 작업
+
+- 단점은 퀄리티가 떨어지기 때문에 영상이 메인이면 비추천 한다.
+- [동영상 최적화 사이트](https://www.media.io/ko/video-compressor.html)에서 압축 가능
+- 이미지에 webp가 있듯이 동영상도 webm이라는 압축 파일이 있다.
+- 하지만 webm도 지원하지 않는 브라우저가 있기 때문에 예외처리를 해야 한다.
+
+```html
+<video className="absolute translateX--1/2 h-screen max-w-none min-w-screen -z-1 bg-black min-w-full min-h-screen" autoplay loop muted>
+  <source src="webm경로.webm" type="video/webm" />
+  <source src="mp4경로.mp4" type="video/mp4" />
+</video>
+```
 
 ### 폰트 최적화(핵심)
 
